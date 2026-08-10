@@ -40,6 +40,10 @@ server.get('/', (req, res) => {
 
 connectDB()
 
-server.listen(envObj.port, () => {
-    console.log(`EMMEY Travels server running on port ${envObj.port}`)
-})
+if (require.main === module) {
+    server.listen(envObj.port, () => {
+        console.log(`EMMEY Travels server running on port ${envObj.port}`)
+    })
+}
+
+module.exports = server
