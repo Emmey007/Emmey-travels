@@ -20,15 +20,22 @@ const userRoute = require('./routes/user')
 
 const server = express()
 
-server.use(helmet())
+server.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+}))
+
 server.use(express.json())
-server.use(cors({ 
+
+server.use(cors({
     origin: [
         envObj.clientUrl,
         'http://localhost:5173',
         'http://localhost:5174',
         'https://emmey-travels-frontend.vercel.app'
-    ] 
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 server.use('/api/v1/auth', authRoute)
