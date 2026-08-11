@@ -286,4 +286,100 @@ const sendBookingFailure = async (user, destination) => {
     })
 }
 
-module.exports = { sendVerificationEmail, sendBookingConfirmation, sendBookingFailure, sendAdminBookingAlert }
+const sendEnquiryConfirmation = async (user, message) => {
+    await transporter.sendMail({
+        from: `"EMMEY Travels" <${envObj.gmailUser}>`,
+        to: user.email,
+        subject: 'We received your enquiry — EMMEY Travels',
+        html: `
+        <!DOCTYPE html>
+        <html>
+        <body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 0;">
+                <tr><td align="center">
+                    <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+                        <tr>
+                            <td style="background:#0a1628;padding:32px 40px;text-align:center;">
+                                <p style="margin:0;font-size:22px;font-weight:800;color:#c9a84c;letter-spacing:4px;">EMMEY</p>
+                                <p style="margin:2px 0 0;font-size:9px;font-weight:600;color:#8899bb;letter-spacing:4px;">TRAVELS</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:40px;">
+                                <p style="font-size:20px;font-weight:800;color:#0a1628;margin:0 0 8px;">We got your message!</p>
+                                <p style="font-size:14px;color:#888;margin:0 0 24px;line-height:1.6;">Hi ${user.name}, thank you for reaching out to EMMEY Travels. We have received your enquiry and our team will get back to you as soon as possible.</p>
+                                <div style="background:#f9f9f9;border-radius:12px;padding:20px;margin-bottom:24px;">
+                                    <p style="margin:0;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Your message</p>
+                                    <p style="margin:0;font-size:14px;color:#333;line-height:1.7;">${message}</p>
+                                </div>
+                                <p style="font-size:13px;color:#bbb;line-height:1.6;">We typically respond within 24 hours. If your matter is urgent, please contact us directly.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background:#f9f9f9;padding:20px 40px;border-top:1px solid #eee;">
+                                <p style="margin:0;font-size:12px;color:#bbb;text-align:center;">© ${new Date().getFullYear()} EMMEY Travels. All rights reserved.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td></tr>
+            </table>
+        </body>
+        </html>
+        `
+    })
+}
+
+const sendAdminEnquiryAlert = async (admin, enquiry) => {
+    await transporter.sendMail({
+        from: `"EMMEY Travels" <${envObj.gmailUser}>`,
+        to: admin.email,
+        subject: `New Enquiry from ${enquiry.name} — EMMEY Travels`,
+        html: `
+        <!DOCTYPE html>
+        <html>
+        <body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 0;">
+                <tr><td align="center">
+                    <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+                        <tr>
+                            <td style="background:#0a1628;padding:32px 40px;text-align:center;">
+                                <p style="margin:0;font-size:22px;font-weight:800;color:#c9a84c;letter-spacing:4px;">EMMEY</p>
+                                <p style="margin:2px 0 0;font-size:9px;font-weight:600;color:#8899bb;letter-spacing:4px;">TRAVELS · ADMIN ALERT</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:40px;">
+                                <p style="font-size:20px;font-weight:800;color:#0a1628;margin:0 0 8px;">New Enquiry Received</p>
+                                <p style="font-size:14px;color:#888;margin:0 0 28px;">Hi ${admin.name}, a new enquiry has been submitted on EMMEY Travels.</p>
+                                <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f9f9;border-radius:12px;overflow:hidden;margin-bottom:24px;">
+                                    <tr><td style="padding:14px 20px;border-bottom:1px solid #eee;">
+                                        <p style="margin:0;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;">From</p>
+                                        <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#0a1628;">${enquiry.name}</p>
+                                    </td></tr>
+                                    <tr><td style="padding:14px 20px;border-bottom:1px solid #eee;">
+                                        <p style="margin:0;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;">Email</p>
+                                        <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#0a1628;">${enquiry.email}</p>
+                                    </td></tr>
+                                    <tr><td style="padding:14px 20px;">
+                                        <p style="margin:0;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;">Message</p>
+                                        <p style="margin:4px 0 0;font-size:14px;color:#333;line-height:1.7;">${enquiry.message}</p>
+                                    </td></tr>
+                                </table>
+                                <a href="${envObj.clientUrl}/dashboard/enquiries" style="display:inline-block;padding:12px 28px;background:#c9a84c;color:#0a1628;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">View & Reply in Dashboard →</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background:#f9f9f9;padding:20px 40px;border-top:1px solid #eee;">
+                                <p style="margin:0;font-size:12px;color:#bbb;text-align:center;">© ${new Date().getFullYear()} EMMEY Travels Admin</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td></tr>
+            </table>
+        </body>
+        </html>
+        `
+    })
+}
+
+module.exports = { sendVerificationEmail, sendBookingConfirmation, sendBookingFailure, sendAdminBookingAlert, sendEnquiryConfirmation, sendAdminEnquiryAlert }

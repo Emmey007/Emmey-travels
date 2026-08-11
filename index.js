@@ -22,7 +22,14 @@ const server = express()
 
 server.use(helmet())
 server.use(express.json())
-server.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174'] }))
+server.use(cors({ 
+    origin: [
+        envObj.clientUrl,
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'https://emmey-travels-frontend.vercel.app'
+    ] 
+}))
 
 server.use('/api/v1/auth', authRoute)
 server.use('/api/v1/listing', listingRoute)
